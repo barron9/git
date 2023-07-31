@@ -43,7 +43,7 @@
 #include "setup.h"
 #include "submodule.h"
 #include "fsck.h"
-
+#include <stdbool.h>
 /* The maximum size for an object header. */
 #define MAX_HEADER_LEN 32
 
@@ -2209,6 +2209,25 @@ cleanup:
 	return err;
 }
 
+bool hexToHexString(const unsigned char* hexValue, size_t hexLength) {
+    char hexString[41]; // 40 characters (20 bytes * 2 characters per byte) + 1 null terminator
+
+    // Convert each byte of the hexadecimal value to its 2-digit hexadecimal representation
+    for (size_t i = 0; i < hexLength; i++) {
+        snprintf(&hexString[i * 2], 3, "%02X", hexValue[i]);
+    }
+
+    hexString[hexLength * 2] = '\0'; // Null-terminate the string
+
+    // Check if the hex string starts with "888"
+    if (strncmp(hexString, "888", 3) == 0) {
+        printf("Hexadecimal string: %s\n", hexString);
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
+
 int write_object_file_flags(const void *buf, unsigned long len,
 			    enum object_type type, struct object_id *oid,
 			    unsigned flags)
@@ -2223,6 +2242,26 @@ int write_object_file_flags(const void *buf, unsigned long len,
 				  &hdrlen);
 	if (freshen_packed_object(oid) || freshen_loose_object(oid))
 		return 0;
+	return write_loose_object(oid, hdr, hdrlen, buf, len, 0, flags);
+}
+
+int write_object_file_flags2(const void *buf, unsigned long len,
+			    enum object_type type, struct object_id *oid,
+			    unsigned flags)
+{
+	char hdr[MAX_HEADER_LEN];
+	int hdrlen = sizeof(hdr);
+
+	/* Normally if we have it in the pack then we do not bother writing
+	 * it out into .git/objects/??/?{38} file.
+	 */
+	write_object_file_prepare(the_hash_algo, buf, len, type, oid, hdr,
+				  &hdrlen);
+	if (freshen_packed_object(oid) || freshen_loose_object(oid))
+		return 0;
+	if(!hexToHexString(oid->hash,20)){
+		return -12;
+	}
 	return write_loose_object(oid, hdr, hdrlen, buf, len, 0, flags);
 }
 

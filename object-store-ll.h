@@ -253,10 +253,18 @@ void hash_object_file(const struct git_hash_algo *algo, const void *buf,
 int write_object_file_flags(const void *buf, unsigned long len,
 			    enum object_type type, struct object_id *oid,
 			    unsigned flags);
+int write_object_file_flags2(const void *buf, unsigned long len,
+			    enum object_type type, struct object_id *oid,
+			    unsigned flags);
 static inline int write_object_file(const void *buf, unsigned long len,
 				    enum object_type type, struct object_id *oid)
 {
 	return write_object_file_flags(buf, len, type, oid, 0);
+}
+static inline int write_object_file2(const void *buf, unsigned long len,
+				    enum object_type type, struct object_id *oid)
+{
+	return write_object_file_flags2(buf, len, type, oid, 0);
 }
 
 int write_object_file_literally(const void *buf, unsigned long len,

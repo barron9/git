@@ -1598,7 +1598,12 @@ static const char commit_utf8_warn[] =
 N_("Warning: commit message did not conform to UTF-8.\n"
    "You may want to amend it after fixing the message, or set the config\n"
    "variable i18n.commitEncoding to the encoding your project uses.\n");
-
+void getRandomLowercaseString(int length, char* randomString) {
+    for (int i = 0; i < length; i++) {
+        randomString[i] = 'a' + rand() % 26; // Generate a random value between 'a' and 'z'
+    }
+    randomString[length] = '\0'; // Null-terminate the string
+}
 int commit_tree_extended(const char *msg, size_t msg_len,
 			 const struct object_id *tree,
 			 struct commit_list *parents, struct object_id *ret,
@@ -1609,7 +1614,7 @@ int commit_tree_extended(const char *msg, size_t msg_len,
 	int result;
 	int encoding_is_utf8;
 	struct strbuf buffer;
-
+retry:
 	assert_oid_type(tree, OBJ_TREE);
 
 	if (memchr(msg, '\0', msg_len))
@@ -1646,6 +1651,16 @@ int commit_tree_extended(const char *msg, size_t msg_len,
 		add_extra_header(&buffer, extra);
 		extra = extra->next;
 	}
+	int length = 10;
+    char* randomStr = (char*)malloc((length + 1) * sizeof(char)); 
+	if (randomStr == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        return 1;
+    }
+
+    getRandomLowercaseString(length, randomStr);
+
+	strbuf_addf(&buffer, "misc %s\n", randomStr);
 	strbuf_addch(&buffer, '\n');
 
 	/* And add the comment */
@@ -1660,7 +1675,11 @@ int commit_tree_extended(const char *msg, size_t msg_len,
 		goto out;
 	}
 
-	result = write_object_file(buffer.buf, buffer.len, OBJ_COMMIT, ret);
+	result = write_object_file2(buffer.buf, buffer.len, OBJ_COMMIT, ret);
+	if(result == -12){
+		strbuf_release(&buffer);
+		goto retry;
+	}
 out:
 	strbuf_release(&buffer);
 	return result;
