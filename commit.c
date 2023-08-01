@@ -80,7 +80,7 @@ struct commit *lookup_commit(struct repository *r, const struct object_id *oid)
 		return create_object(r, oid, alloc_commit_node(r));
 	return object_as_type(obj, OBJ_COMMIT, 0);
 }
-
+ 
 struct commit *lookup_commit_reference_by_name(const char *name)
 {
 	struct object_id oid;
@@ -1614,6 +1614,7 @@ int commit_tree_extended(const char *msg, size_t msg_len,
 	int result;
 	int encoding_is_utf8;
 	struct strbuf buffer;
+	char* parentCommit = NULL;
 retry:
 	assert_oid_type(tree, OBJ_TREE);
 
@@ -1631,11 +1632,17 @@ retry:
 	 * different order of parents will be a _different_ changeset even
 	 * if everything else stays the same.
 	 */
-	while (parents) {
+	if(parentCommit != NULL){
+		strbuf_addf(&buffer, "parent %s\n",
+			    parentCommit);
+	}
+	while (parents && parentCommit == NULL) {
 		struct commit *parent = pop_commit(&parents);
+		parentCommit = oid_to_hex(&parent->object.oid);
 		strbuf_addf(&buffer, "parent %s\n",
 			    oid_to_hex(&parent->object.oid));
 	}
+	
 
 	/* Person/date information */
 	if (!author)
