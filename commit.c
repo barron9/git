@@ -518,6 +518,7 @@ int parse_commit_buffer(struct repository *r, struct commit *item, const void *b
 		 */
 		if (graft && (graft->nr_parent < 0 || !grafts_keep_true_parents))
 			continue;
+		printf("parsecommitbuffer: %s",oid_to_hex(&parent));
 		new_parent = lookup_commit(r, &parent);
 		if (!new_parent)
 			return error("bad parent %s in commit %s",
@@ -1632,7 +1633,7 @@ retry:
 	 * different order of parents will be a _different_ changeset even
 	 * if everything else stays the same.
 	 */
-	if(parentCommit != NULL){
+	if(parentCommit != NULL){ 
 		strbuf_addf(&buffer, "parent %s\n",
 			    parentCommit);
 	}

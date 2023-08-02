@@ -162,9 +162,12 @@ void *create_object(struct repository *r, const struct object_id *oid, void *o)
 }
 
 void *object_as_type(struct object *obj, enum object_type type, int quiet)
-{
-	if (obj->type == type)
+{		
+	printf("\ni object_as_type: %s %d\n",oid_to_hex(&obj->oid),obj->type);
+
+	if (obj->type == type){
 		return obj;
+	}
 	else if (obj->type == OBJ_NONE) {
 		if (type == OBJ_COMMIT)
 			init_commit_node((struct commit *) obj);

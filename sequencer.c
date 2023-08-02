@@ -1210,6 +1210,7 @@ int update_head_with_reflog(const struct commit *old_head,
 	}
 
 	transaction = ref_transaction_begin(err);
+	printf("\n prnt : %s \n", oid_to_hex(&old_head->parents->item->object.oid));
 	if (!transaction ||
 	    ref_transaction_update(transaction, "HEAD", new_head,
 				   old_head ? &old_head->object.oid : null_oid(),
