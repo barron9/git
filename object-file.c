@@ -2260,11 +2260,11 @@ int write_object_file_flags2(const void *buf, unsigned long len,
 	if (freshen_packed_object(oid) || freshen_loose_object(oid))
 		return 0;
 	if(!hexToHexString(oid->hash,20)){
-		//return -12;
+		return -12;
 	}
 	return write_loose_object(oid, hdr, hdrlen, buf, len, 0, flags);
 }
-
+ 
 int write_object_file_literally(const void *buf, unsigned long len,
 				const char *type, struct object_id *oid,
 				unsigned flags)

@@ -46,7 +46,7 @@
 #include "commit-reach.h"
 #include "commit-graph.h"
 #include "pretty.h"
-
+#include "hex.h"
 static const char * const builtin_commit_usage[] = {
 	N_("git commit [-a | --interactive | --patch] [-s] [-v] [-u<mode>] [--amend]\n"
 	   "           [--dry-run] [(-c | -C | --squash) <commit> | --fixup [(amend|reword):]<commit>)]\n"
@@ -1839,7 +1839,7 @@ int cmd_commit(int argc, const char **argv, const char *prefix)
 		struct commit_extra_header **tail = &extra;
 		append_merge_tag_headers(parents, &tail);
 	}
-
+	printf("&the_index.cache_tree->oid: %s", oid_to_hex(&the_index.cache_tree->oid));
 	if (commit_tree_extended(sb.buf, sb.len, &the_index.cache_tree->oid,
 				 parents, &oid, author_ident.buf, NULL,
 				 sign_commit, extra)) {
