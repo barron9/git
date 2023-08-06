@@ -2220,7 +2220,7 @@ bool hexToHexString(const unsigned char* hexValue, size_t hexLength) {
     hexString[hexLength * 2] = '\0'; // Null-terminate the string
 
     // Check if the hex string starts with "888"
-    if (strncmp(hexString, "8888", 4) == 0) {
+    if (strncmp(hexString, "88888", 5) == 0) {
         printf("Hexadecimal string: %s\n", hexString);
         return TRUE;
     } else {

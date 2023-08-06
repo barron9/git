@@ -1636,7 +1636,7 @@ retry:
 	if(strcmp(parentCommit, "This is a 40-character string!!") != 0){ 
 		strbuf_addf(&buffer, "parent %s\n", // tree olarak gidiyor 3. looptan sonra.
 			    parentCommit);
-		printf("pcommit : %s \n",parentCommit);
+		//printf("pcommit : %s \n",parentCommit);
 	}
 	while (parents && strcmp(parentCommit, "This is a 40-character string!!") == 0) {
 		struct commit *parent = pop_commit(&parents);
